@@ -39,7 +39,6 @@
             color: var(--text);
             min-height: 100vh;
             overflow-x: hidden;
-            padding-bottom: 80px;
             line-height: 1.6;
         }
 
@@ -119,6 +118,7 @@
             max-width: 100%;
             padding: 0 16px;
             margin: 0 auto;
+            padding-bottom: 120px; /* Space for chat input */
         }
 
         /* Tab navigation */
@@ -153,7 +153,7 @@
         .chat-container {
             display: flex;
             flex-direction: column;
-            height: 60vh;
+            height: 55vh;
             margin-bottom: 20px;
             border-radius: 20px;
             overflow: hidden;
@@ -235,11 +235,14 @@
 
         /* Chat input */
         .chat-input-container {
-            position: sticky;
+            position: fixed;
             bottom: 0;
+            left: 0;
+            right: 0;
             padding: 16px;
             background: rgba(15, 23, 42, 0.95);
             border-top: 1px solid rgba(99, 102, 241, 0.1);
+            z-index: 90;
         }
 
         .chat-input {
@@ -362,7 +365,7 @@
         /* Goal Tracker */
         .goal-tracker-btn {
             position: fixed;
-            bottom: 100px;
+            bottom: 160px; /* Adjusted to not conflict with chat */
             right: 20px;
             width: 64px;
             height: 64px;
@@ -373,7 +376,7 @@
             justify-content: center;
             font-size: 1.8rem;
             cursor: pointer;
-            z-index: 90;
+            z-index: 85;
             box-shadow: 0 6px 24px rgba(245, 158, 11, 0.4);
             animation: pulse 2s infinite;
             transition: var(--transition);
@@ -641,7 +644,7 @@
             }
             
             .chat-container {
-                height: 65vh;
+                height: 60vh;
             }
         }
 
@@ -714,6 +717,14 @@
         .hidden {
             display: none;
         }
+        
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
     </style>
 </head>
 <body>
@@ -749,25 +760,15 @@
                 <div class="chat-header">
                     <div class="ai-indicator"></div>
                     <div>NeuroAssistant</div>
-                    <div style="margin-left: auto; font-size: 0.9rem; color: var(--accent);">Context Aware</div>
+                    <div class="status-badge">Online</div>
                 </div>
                 <div class="chat-messages" id="chat-messages">
                     <div class="message ai-message">
-                        Welcome to CognOS MindShell! I'm your NeuroAssistant, ready to help you organize thoughts, set goals, and unlock your potential. How can I assist you today?
+                        Welcome to CognOS MindShell! I'm your AI assistant, ready to help you organize thoughts, set goals, and unlock your potential. How can I assist you today?
                         <div class="tag-selector">
                             <span>🤖 System</span>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Chat Input -->
-            <div class="chat-input-container">
-                <div class="chat-input">
-                    <input type="text" id="user-input" placeholder="Message NeuroAssistant...">
-                    <button class="send-btn" id="send-btn">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
                 </div>
             </div>
         </div>
@@ -855,6 +856,16 @@
         </div>
     </div>
 
+    <!-- Chat Input -->
+    <div class="chat-input-container">
+        <div class="chat-input">
+            <input type="text" id="user-input" placeholder="Message NeuroAssistant...">
+            <button class="send-btn" id="send-btn">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
     <!-- Goal Tracker Button -->
     <div class="goal-tracker-btn" id="goal-tracker-btn">
         🎯
@@ -910,6 +921,8 @@
         const goalsList = document.getElementById('goals-list');
         const tabs = document.querySelectorAll('.tab');
         const tabContents = document.querySelectorAll('.tab-content');
+        const createZoneBtn = document.getElementById('create-zone-btn');
+        const newGoalBtn = document.getElementById('new-goal-btn');
         
         // Enhanced AI responses with over 100 context-aware options
         const aiResponses = {
@@ -1149,6 +1162,11 @@
                     
                     // Add to goals list
                     addGoalToUI(goal);
+                    
+                    // Close modal after 3 seconds
+                    setTimeout(() => {
+                        goalModal.classList.remove('active');
+                    }, 3000);
                 }, 800);
             }
         }
@@ -1286,6 +1304,7 @@
                 connections: connections
             };
             localStorage.setItem('cognos_mindmap', JSON.stringify(data));
+            alert("MindMap saved successfully!");
         }
         
         // Add to timeline
@@ -1425,6 +1444,50 @@
                         content.classList.toggle('active', content.id === `${tabName}-tab`);
                         content.classList.toggle('hidden', content.id !== `${tabName}-tab`);
                     });
+                });
+            });
+            
+            // Zone creation
+            createZoneBtn.addEventListener('click', () => {
+                const zoneName = prompt("Enter new zone name:");
+                if (zoneName && zoneName.trim() !== '') {
+                    const zoneIcon = prompt("Enter an emoji for this zone:");
+                    const zonesGrid = document.getElementById('zones-grid');
+                    
+                    const zoneCard = document.createElement('div');
+                    zoneCard.classList.add('zone-card', 'glass');
+                    zoneCard.dataset.zone = zoneName.toLowerCase().replace(/\s+/g, '-');
+                    zoneCard.innerHTML = `
+                        <div class="zone-icon">${zoneIcon || '✨'}</div>
+                        <div class="zone-title">${zoneName}</div>
+                        <div class="zone-count">0 entries</div>
+                    `;
+                    
+                    zonesGrid.appendChild(zoneCard);
+                    alert(`"${zoneName}" zone created successfully!`);
+                }
+            });
+            
+            // New goal button
+            newGoalBtn.addEventListener('click', () => {
+                goalModal.classList.add('active');
+            });
+            
+            // Settings button
+            document.getElementById('settings-btn').addEventListener('click', () => {
+                alert("Settings panel would open here in a production app");
+            });
+            
+            // Export button
+            document.getElementById('export-btn').addEventListener('click', () => {
+                alert("Export functionality would be implemented here");
+            });
+            
+            // Zone cards
+            document.querySelectorAll('.zone-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const zone = this.dataset.zone;
+                    alert(`Showing content for ${zone} zone`);
                 });
             });
         }
