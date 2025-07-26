@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0f172a">
-    <title>CognOS v0.2 - AI-Native MindShell</title>
+    <title>CognOS v1.0 - AI-Native MindShell</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="manifest" href="/manifest.json">
@@ -539,8 +539,8 @@
             flex: 1;
         }
 
-        /* Innovation features */
-        .mindmap-preview {
+        /* MindMap */
+        .mindmap-container {
             padding: 24px;
             margin: 30px 16px;
             border-radius: 24px;
@@ -550,7 +550,7 @@
             overflow: hidden;
         }
 
-        .mindmap-title {
+        .mindmap-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -558,30 +558,17 @@
         }
 
         .mindmap-canvas {
-            height: 200px;
+            height: 300px;
             background: rgba(15, 23, 42, 0.4);
             border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             position: relative;
             overflow: hidden;
         }
 
-        .mindmap-canvas::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, rgba(139, 92, 246, 0.1), transparent 70%);
-        }
-
         .node {
             position: absolute;
-            width: 40px;
-            height: 40px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -589,24 +576,58 @@
             background: var(--card);
             border: 2px solid var(--primary);
             z-index: 2;
+            cursor: move;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: var(--transition);
+            user-select: none;
+            font-weight: 500;
+            text-align: center;
+            padding: 5px;
+        }
+
+        .node:hover {
+            transform: scale(1.1);
+            z-index: 3;
         }
 
         .node-main {
-            width: 60px;
-            height: 60px;
+            width: 80px;
+            height: 80px;
             background: linear-gradient(45deg, var(--primary), var(--secondary));
             font-weight: 700;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 3px solid var(--accent);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
         }
-
-        .node-1 { top: 30%; left: 20%; background: rgba(16, 185, 129, 0.2); border-color: var(--success); }
-        .node-2 { top: 60%; left: 30%; background: rgba(245, 158, 11, 0.2); border-color: var(--warning); }
-        .node-3 { top: 40%; left: 50%; background: rgba(239, 68, 68, 0.2); border-color: var(--danger); }
-        .node-4 { top: 20%; left: 70%; background: rgba(6, 182, 212, 0.2); border-color: var(--accent); }
 
         .connection {
             position: absolute;
             background: rgba(99, 102, 241, 0.4);
             z-index: 1;
+            transform-origin: 0 0;
+        }
+
+        .mindmap-controls {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .mindmap-btn {
+            padding: 10px 20px;
+            border-radius: 12px;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: var(--text);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .mindmap-btn:hover {
+            background: rgba(99, 102, 241, 0.2);
+            transform: translateY(-2px);
         }
 
         /* Responsive design */
@@ -689,6 +710,10 @@
             0%, 60%, 100% { transform: translateY(0); }
             30% { transform: translateY(-6px); }
         }
+        
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -696,17 +721,14 @@
     <div class="header">
         <div class="logo">
             <div class="logo-icon">C</div>
-            <span>CognOS v0.2</span>
+            <span>CognOS v1.0</span>
         </div>
         <div class="nav-icons">
-            <div class="nav-icon">
-                <i class="fas fa-search"></i>
-            </div>
-            <div class="nav-icon">
+            <div class="nav-icon" id="settings-btn">
                 <i class="fas fa-cog"></i>
             </div>
-            <div class="nav-icon">
-                <i class="fas fa-user"></i>
+            <div class="nav-icon" id="export-btn">
+                <i class="fas fa-file-export"></i>
             </div>
         </div>
     </div>
@@ -714,110 +736,120 @@
     <div class="app-container">
         <!-- Tab Navigation -->
         <div class="tabs">
-            <div class="tab active">MindChat</div>
-            <div class="tab">Zones</div>
-            <div class="tab">Timeline</div>
-            <div class="tab">MindMap</div>
-            <div class="tab">Analytics</div>
+            <div class="tab active" data-tab="chat">MindChat</div>
+            <div class="tab" data-tab="zones">Zones</div>
+            <div class="tab" data-tab="timeline">Timeline</div>
+            <div class="tab" data-tab="mindmap">MindMap</div>
+            <div class="tab" data-tab="goals">Goals</div>
         </div>
 
         <!-- Chat Interface -->
-        <div class="chat-container glass">
-            <div class="chat-header">
-                <div class="ai-indicator"></div>
-                <div>NeuroAssistant</div>
-                <div style="margin-left: auto; font-size: 0.9rem; color: var(--accent);">Context Aware</div>
+        <div class="tab-content active" id="chat-tab">
+            <div class="chat-container glass">
+                <div class="chat-header">
+                    <div class="ai-indicator"></div>
+                    <div>NeuroAssistant</div>
+                    <div style="margin-left: auto; font-size: 0.9rem; color: var(--accent);">Context Aware</div>
+                </div>
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message ai-message">
+                        Welcome to CognOS MindShell! I'm your NeuroAssistant, ready to help you organize thoughts, set goals, and unlock your potential. How can I assist you today?
+                        <div class="tag-selector">
+                            <span>🤖 System</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="chat-messages" id="chat-messages">
-                <div class="message ai-message">
-                    Welcome to CognOS MindShell! I'm your NeuroAssistant, ready to help you organize thoughts, set goals, and unlock your potential. How can I assist you today?
-                    <div class="tag-selector">
-                        <span>🤖 System</span>
+
+            <!-- Chat Input -->
+            <div class="chat-input-container">
+                <div class="chat-input">
+                    <input type="text" id="user-input" placeholder="Message NeuroAssistant...">
+                    <button class="send-btn" id="send-btn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mind Zones -->
+        <div class="tab-content hidden" id="zones-tab">
+            <div class="zones-container">
+                <div class="section-header">
+                    <div class="section-title">Semantic Mind Zones</div>
+                    <button class="btn" id="create-zone-btn">New Zone</button>
+                </div>
+                <div class="zones-grid" id="zones-grid">
+                    <div class="zone-card glass" data-zone="ideas">
+                        <div class="zone-icon">💡</div>
+                        <div class="zone-title">Ideas</div>
+                        <div class="zone-count">12 entries</div>
+                    </div>
+                    <div class="zone-card glass" data-zone="goals">
+                        <div class="zone-icon">🎯</div>
+                        <div class="zone-title">Goals</div>
+                        <div class="zone-count">5 entries</div>
+                    </div>
+                    <div class="zone-card glass" data-zone="money">
+                        <div class="zone-icon">💰</div>
+                        <div class="zone-title">Finance</div>
+                        <div class="zone-count">8 entries</div>
+                    </div>
+                    <div class="zone-card glass" data-zone="health">
+                        <div class="zone-icon">❤️</div>
+                        <div class="zone-title">Wellness</div>
+                        <div class="zone-count">7 entries</div>
+                    </div>
+                    <div class="zone-card glass" data-zone="random">
+                        <div class="zone-icon">🌌</div>
+                        <div class="zone-title">Cosmos</div>
+                        <div class="zone-count">15 entries</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Chat Input -->
-        <div class="chat-input-container">
-            <div class="chat-input">
-                <input type="text" id="user-input" placeholder="Message NeuroAssistant...">
-                <button class="send-btn" id="send-btn">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Mind Zones -->
-        <div class="zones-container">
-            <div class="section-header">
-                <div class="section-title">Semantic Mind Zones</div>
-                <div class="view-all">View All</div>
-            </div>
-            <div class="zones-grid">
-                <div class="zone-card glass" data-zone="ideas">
-                    <div class="zone-icon">💡</div>
-                    <div class="zone-title">Ideas</div>
-                    <div class="zone-count">12 entries</div>
-                </div>
-                <div class="zone-card glass" data-zone="goals">
-                    <div class="zone-icon">🎯</div>
-                    <div class="zone-title">Goals</div>
-                    <div class="zone-count">5 entries</div>
-                </div>
-                <div class="zone-card glass" data-zone="money">
-                    <div class="zone-icon">💰</div>
-                    <div class="zone-title">Finance</div>
-                    <div class="zone-count">8 entries</div>
-                </div>
-                <div class="zone-card glass" data-zone="health">
-                    <div class="zone-icon">❤️</div>
-                    <div class="zone-title">Wellness</div>
-                    <div class="zone-count">7 entries</div>
-                </div>
-                <div class="zone-card glass" data-zone="random">
-                    <div class="zone-icon">🌌</div>
-                    <div class="zone-title">Cosmos</div>
-                    <div class="zone-count">15 entries</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- MindMap Preview -->
-        <div class="mindmap-preview glass">
-            <div class="mindmap-title">
-                <div class="section-title">Cognitive MindMap</div>
-                <div class="view-all">Explore</div>
-            </div>
-            <div class="mindmap-canvas">
-                <div class="node node-main">You</div>
-                <div class="node node-1">Work</div>
-                <div class="node node-2">Health</div>
-                <div class="node node-3">Relations</div>
-                <div class="node node-4">Growth</div>
-                <div class="connection" style="top: 100px; left: 150px; width: 100px; height: 3px; transform: rotate(30deg);"></div>
-                <div class="connection" style="top: 120px; left: 180px; width: 80px; height: 3px; transform: rotate(-20deg);"></div>
-            </div>
-        </div>
-
         <!-- Memory Timeline -->
-        <div class="timeline-container">
-            <div class="section-header">
-                <div class="section-title">Memory Timeline</div>
-                <div class="collapse-btn">Collapse</div>
+        <div class="tab-content hidden" id="timeline-tab">
+            <div class="timeline-container">
+                <div class="section-header">
+                    <div class="section-title">Memory Timeline</div>
+                    <button class="btn" id="filter-timeline-btn">Filter</button>
+                </div>
+                <div class="timeline-list" id="timeline-list">
+                    <!-- Timeline items will be populated here -->
+                </div>
             </div>
-            <div class="timeline-list">
-                <div class="timeline-item glass">
-                    <div class="timeline-date">Today, 10:30 AM</div>
-                    <div class="timeline-content">Started morning meditation session</div>
+        </div>
+
+        <!-- MindMap -->
+        <div class="tab-content hidden" id="mindmap-tab">
+            <div class="mindmap-container glass">
+                <div class="mindmap-header">
+                    <div class="section-title">Cognitive MindMap</div>
+                    <div class="mindmap-controls">
+                        <button class="mindmap-btn" id="add-node-btn">Add Node</button>
+                        <button class="mindmap-btn" id="reset-mindmap-btn">Reset</button>
+                    </div>
                 </div>
-                <div class="timeline-item glass">
-                    <div class="timeline-date">Today, 9:15 AM</div>
-                    <div class="timeline-content">Discussed project timeline with team</div>
+                <div class="mindmap-canvas" id="mindmap-canvas">
+                    <!-- Mindmap nodes will be added here -->
                 </div>
-                <div class="timeline-item glass">
-                    <div class="timeline-date">Yesterday, 6:45 PM</div>
-                    <div class="timeline-content">Completed workout routine</div>
+                <div class="mindmap-controls">
+                    <button class="btn" id="save-mindmap-btn">Save MindMap</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Goals -->
+        <div class="tab-content hidden" id="goals-tab">
+            <div class="zones-container">
+                <div class="section-header">
+                    <div class="section-title">GoalTracker</div>
+                    <button class="btn" id="new-goal-btn">New Goal</button>
+                </div>
+                <div class="goals-list" id="goals-list">
+                    <!-- Goals will be populated here -->
                 </div>
             </div>
         </div>
@@ -870,6 +902,14 @@
         const goalInput = document.getElementById('goal-input');
         const generateStepsBtn = document.getElementById('generate-steps-btn');
         const stepsContainer = document.getElementById('steps-container');
+        const mindmapCanvas = document.getElementById('mindmap-canvas');
+        const addNodeBtn = document.getElementById('add-node-btn');
+        const resetMindmapBtn = document.getElementById('reset-mindmap-btn');
+        const saveMindmapBtn = document.getElementById('save-mindmap-btn');
+        const timelineList = document.getElementById('timeline-list');
+        const goalsList = document.getElementById('goals-list');
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
         
         // Enhanced AI responses with over 100 context-aware options
         const aiResponses = {
@@ -918,6 +958,11 @@
                 "Journaling insights creates valuable cognitive artifacts.",
                 "Periodic review accelerates growth. Want to schedule a reflection session?"
             ],
+            mindmap: [
+                "I've added this concept to your mindmap for visual exploration.",
+                "This idea connects well to your existing knowledge network.",
+                "Visual thinking enhances understanding. Would you like to expand this in your mindmap?"
+            ],
             default: [
                 "I'm analyzing that... here's what I suggest.",
                 "Processing your thought pattern...",
@@ -949,6 +994,21 @@
             health: "Wellness",
             random: "Cosmos"
         };
+        
+        // Mindmap state
+        let mindmapNodes = [];
+        let connections = [];
+        let draggingNode = null;
+        let offsetX, offsetY;
+        
+        // Initialize app
+        function initApp() {
+            initChat();
+            initMindMap();
+            loadTimeline();
+            loadGoals();
+            setupEventListeners();
+        }
         
         // Initialize chat from localStorage
         function initChat() {
@@ -986,6 +1046,9 @@
             
             // Save to localStorage
             saveMessageToStorage(text, sender, zone);
+            
+            // Add to timeline
+            addToTimeline(text, sender);
         }
         
         // Show typing indicator
@@ -1029,6 +1092,8 @@
                 return aiResponses.learning[Math.floor(Math.random() * aiResponses.learning.length)];
             } else if (msg.includes('reflect') || msg.includes('review') || msg.includes('journal')) {
                 return aiResponses.reflection[Math.floor(Math.random() * aiResponses.reflection.length)];
+            } else if (msg.includes('mindmap') || msg.includes('visualize') || msg.includes('connect')) {
+                return aiResponses.mindmap[Math.floor(Math.random() * aiResponses.mindmap.length)];
             }
             
             // Random response from all categories if no specific match
@@ -1054,6 +1119,11 @@
                     // Generate and display AI response
                     const aiResponse = getAIResponse(message);
                     addMessageToChat(aiResponse, 'ai');
+                    
+                    // Add to mindmap if relevant
+                    if (message.toLowerCase().includes('idea') || message.toLowerCase().includes('concept')) {
+                        addNodeToMindmap(message.substring(0, 20), Math.random() * 300, Math.random() * 200);
+                    }
                 }, 1500);
             }
         }
@@ -1076,35 +1146,291 @@
                     // Add to Goals zone
                     const goalMessage = `New Goal: ${goal}`;
                     saveMessageToStorage(goalMessage, 'ai', 'goals');
+                    
+                    // Add to goals list
+                    addGoalToUI(goal);
                 }, 800);
             }
         }
         
-        // Event Listeners
-        sendBtn.addEventListener('click', sendMessage);
-        userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
-        });
-        
-        goalTrackerBtn.addEventListener('click', () => {
-            goalModal.classList.add('active');
-        });
-        
-        closeModal.addEventListener('click', () => {
-            goalModal.classList.remove('active');
-        });
-        
-        generateStepsBtn.addEventListener('click', generateGoalSteps);
-        
-        // Close modal when clicking outside
-        window.addEventListener('click', (e) => {
-            if (e.target === goalModal) {
-                goalModal.classList.remove('active');
+        // Initialize mindmap
+        function initMindMap() {
+            // Load saved mindmap
+            const savedMindmap = localStorage.getItem('cognos_mindmap');
+            if (savedMindmap) {
+                const data = JSON.parse(savedMindmap);
+                mindmapNodes = data.nodes;
+                connections = data.connections;
+                renderMindMap();
+            } else {
+                // Create central node
+                addNodeToMindmap("You", 150, 150, true);
             }
-        });
+            
+            // Set up event listeners for mindmap
+            mindmapCanvas.addEventListener('mousedown', startDrag);
+            mindmapCanvas.addEventListener('mousemove', dragNode);
+            mindmapCanvas.addEventListener('mouseup', endDrag);
+            mindmapCanvas.addEventListener('mouseleave', endDrag);
+        }
         
-        // Initialize chat on load
-        window.addEventListener('DOMContentLoaded', initChat);
+        // Add node to mindmap
+        function addNodeToMindmap(text, x, y, isCentral = false) {
+            const node = {
+                id: Date.now(),
+                text: text,
+                x: x,
+                y: y,
+                isCentral: isCentral
+            };
+            
+            mindmapNodes.push(node);
+            
+            // Connect to central node if not central itself
+            if (!isCentral) {
+                const centralNode = mindmapNodes.find(n => n.isCentral);
+                if (centralNode) {
+                    connections.push({
+                        from: centralNode.id,
+                        to: node.id
+                    });
+                }
+            }
+            
+            renderMindMap();
+        }
+        
+        // Render mindmap
+        function renderMindMap() {
+            // Clear canvas
+            mindmapCanvas.innerHTML = '';
+            
+            // Draw connections
+            connections.forEach(conn => {
+                const fromNode = mindmapNodes.find(n => n.id === conn.from);
+                const toNode = mindmapNodes.find(n => n.id === conn.to);
+                
+                if (fromNode && toNode) {
+                    const line = document.createElement('div');
+                    line.classList.add('connection');
+                    
+                    // Calculate line position and length
+                    const dx = toNode.x - fromNode.x;
+                    const dy = toNode.y - fromNode.y;
+                    const length = Math.sqrt(dx * dx + dy * dy);
+                    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+                    
+                    line.style.width = `${length}px`;
+                    line.style.top = `${fromNode.y}px`;
+                    line.style.left = `${fromNode.x}px`;
+                    line.style.transform = `rotate(${angle}deg)`;
+                    
+                    mindmapCanvas.appendChild(line);
+                }
+            });
+            
+            // Draw nodes
+            mindmapNodes.forEach(node => {
+                const nodeElement = document.createElement('div');
+                nodeElement.classList.add('node');
+                if (node.isCentral) nodeElement.classList.add('node-main');
+                nodeElement.textContent = node.text;
+                nodeElement.style.top = `${node.y}px`;
+                nodeElement.style.left = `${node.x}px`;
+                nodeElement.dataset.id = node.id;
+                
+                mindmapCanvas.appendChild(nodeElement);
+            });
+        }
+        
+        // Start dragging a node
+        function startDrag(e) {
+            const nodeElement = e.target.closest('.node');
+            if (nodeElement) {
+                draggingNode = mindmapNodes.find(n => n.id == nodeElement.dataset.id);
+                if (draggingNode) {
+                    const rect = nodeElement.getBoundingClientRect();
+                    offsetX = e.clientX - rect.left;
+                    offsetY = e.clientY - rect.top;
+                    nodeElement.style.cursor = 'grabbing';
+                }
+            }
+        }
+        
+        // Drag node
+        function dragNode(e) {
+            if (draggingNode) {
+                const rect = mindmapCanvas.getBoundingClientRect();
+                const x = e.clientX - rect.left - offsetX;
+                const y = e.clientY - rect.top - offsetY;
+                
+                draggingNode.x = x;
+                draggingNode.y = y;
+                
+                renderMindMap();
+            }
+        }
+        
+        // End dragging
+        function endDrag() {
+            if (draggingNode) {
+                draggingNode = null;
+                saveMindMap();
+            }
+        }
+        
+        // Save mindmap
+        function saveMindMap() {
+            const data = {
+                nodes: mindmapNodes,
+                connections: connections
+            };
+            localStorage.setItem('cognos_mindmap', JSON.stringify(data));
+        }
+        
+        // Add to timeline
+        function addToTimeline(text, sender) {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const dateString = now.toLocaleDateString([], { month: 'short', day: 'numeric' });
+            
+            const timelineItem = document.createElement('div');
+            timelineItem.classList.add('timeline-item', 'glass');
+            timelineItem.innerHTML = `
+                <div class="timeline-date">${dateString}, ${timeString}</div>
+                <div class="timeline-content">${sender === 'user' ? 'You: ' : 'AI: '}${text}</div>
+            `;
+            
+            timelineList.prepend(timelineItem);
+        }
+        
+        // Load timeline from storage
+        function loadTimeline() {
+            const savedChat = localStorage.getItem('cognos_chat');
+            if (savedChat) {
+                const messages = JSON.parse(savedChat);
+                
+                // Sort messages by timestamp
+                messages.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                
+                // Display the latest 10 messages
+                messages.slice(0, 10).forEach(msg => {
+                    const date = new Date(msg.timestamp);
+                    const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    const dateString = date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+                    
+                    const timelineItem = document.createElement('div');
+                    timelineItem.classList.add('timeline-item', 'glass');
+                    timelineItem.innerHTML = `
+                        <div class="timeline-date">${dateString}, ${timeString}</div>
+                        <div class="timeline-content">${msg.sender === 'user' ? 'You: ' : 'AI: '}${msg.text}</div>
+                    `;
+                    
+                    timelineList.appendChild(timelineItem);
+                });
+            }
+        }
+        
+        // Add goal to UI
+        function addGoalToUI(goal) {
+            const goalItem = document.createElement('div');
+            goalItem.classList.add('zone-card', 'glass');
+            goalItem.innerHTML = `
+                <div class="zone-icon">🎯</div>
+                <div class="zone-title">${goal.substring(0, 30)}</div>
+                <div class="zone-count">Active</div>
+            `;
+            
+            goalsList.appendChild(goalItem);
+        }
+        
+        // Load goals from storage
+        function loadGoals() {
+            const savedChat = localStorage.getItem('cognos_chat');
+            if (savedChat) {
+                const messages = JSON.parse(savedChat);
+                
+                // Filter goal messages
+                const goalMessages = messages.filter(msg => 
+                    msg.zone === 'goals' && msg.sender === 'ai'
+                );
+                
+                // Display goals
+                goalMessages.slice(0, 5).forEach(msg => {
+                    addGoalToUI(msg.text);
+                });
+            }
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Chat
+            sendBtn.addEventListener('click', sendMessage);
+            userInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendMessage();
+            });
+            
+            // Goal tracker
+            goalTrackerBtn.addEventListener('click', () => {
+                goalModal.classList.add('active');
+            });
+            
+            closeModal.addEventListener('click', () => {
+                goalModal.classList.remove('active');
+            });
+            
+            generateStepsBtn.addEventListener('click', generateGoalSteps);
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target === goalModal) {
+                    goalModal.classList.remove('active');
+                }
+            });
+            
+            // Mindmap
+            addNodeBtn.addEventListener('click', () => {
+                const text = prompt("Enter node text:");
+                if (text) {
+                    addNodeToMindmap(
+                        text, 
+                        Math.random() * (mindmapCanvas.offsetWidth - 100), 
+                        Math.random() * (mindmapCanvas.offsetHeight - 100)
+                    );
+                    saveMindMap();
+                }
+            });
+            
+            resetMindmapBtn.addEventListener('click', () => {
+                if (confirm("Reset your mindmap? This cannot be undone.")) {
+                    mindmapNodes = [];
+                    connections = [];
+                    addNodeToMindmap("You", 150, 150, true);
+                    saveMindMap();
+                }
+            });
+            
+            saveMindmapBtn.addEventListener('click', saveMindMap);
+            
+            // Tab switching
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Update active tab
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show corresponding content
+                    const tabName = this.dataset.tab;
+                    tabContents.forEach(content => {
+                        content.classList.toggle('active', content.id === `${tabName}-tab`);
+                        content.classList.toggle('hidden', content.id !== `${tabName}-tab`);
+                    });
+                });
+            });
+        }
+        
+        // Initialize app on load
+        window.addEventListener('DOMContentLoaded', initApp);
         
         // PWA Installation
         window.addEventListener('beforeinstallprompt', (e) => {
@@ -1118,22 +1444,6 @@
             // Listen for app install event
             window.addEventListener('appinstalled', () => {
                 console.log('CognOS installed successfully');
-            });
-        });
-        
-        // Zone card interactions
-        document.querySelectorAll('.zone-card').forEach(card => {
-            card.addEventListener('click', function() {
-                const zone = this.getAttribute('data-zone');
-                alert(`Showing content for ${zoneNames[zone]} zone`);
-            });
-        });
-        
-        // Tab switching
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
             });
         });
     </script>
