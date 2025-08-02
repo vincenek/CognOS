@@ -3,966 +3,1543 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PulsePad - Your Personal Rhythm Companion</title>
+    <title>CognOS v1.0 - AI-Native MindShell</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --accent: #06b6d4;
+            --bg: #0f172a;
+            --card: rgba(30, 41, 59, 0.8);
+            --card-border: rgba(99, 102, 241, 0.3);
+            --text: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --glass: rgba(15, 23, 42, 0.7);
+            --blur: blur(16px);
+            --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
-        }
-
-        :root {
-            --primary-bg: #0f0e17;
-            --card-bg: rgba(255, 255, 255, 0.05);
-            --text-color: #fffffe;
-            --accent-1: #ff8906;
-            --accent-2: #f25f4c;
-            --accent-3: #e53170;
-            --accent-4: #2cb67d;
-            --transition: all 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+            font-family: 'Inter', sans-serif;
         }
 
         body {
-            background: var(--primary-bg);
-            color: var(--text-color);
+            background: radial-gradient(ellipse at top, var(--bg) 0%, #0c1424 100%);
+            color: var(--text);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
             overflow-x: hidden;
-            position: relative;
+            line-height: 1.6;
         }
 
-        .background-pattern {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 10% 20%, rgba(255, 137, 6, 0.1) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(242, 95, 76, 0.1) 0%, transparent 20%),
-                radial-gradient(circle at 50% 30%, rgba(44, 182, 125, 0.1) 0%, transparent 25%);
-            z-index: -1;
-            opacity: 0.7;
+        /* Glassmorphism effect */
+        .glass {
+            background: var(--glass);
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(2, 8, 20, 0.4);
+            transition: var(--transition);
         }
 
-        .pulse-effect {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            overflow: hidden;
-            z-index: -2;
-        }
-
-        .pulse-circle {
-            position: absolute;
-            border-radius: 50%;
-            opacity: 0;
-            animation: pulse 8s infinite cubic-bezier(0.36, 0, 0.66, -0.56);
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(0); opacity: 0.7; }
-            100% { transform: scale(1.5); opacity: 0; }
-        }
-
-        .container {
-            width: 100%;
-            max-width: 500px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 25px;
-            z-index: 10;
-        }
-
+        /* Header */
         .header {
-            text-align: center;
-            margin-bottom: 10px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.1);
         }
 
         .logo {
             display: flex;
-            justify-content: center;
-            margin-bottom: 15px;
-        }
-
-        .logo-circle {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: var(--accent-1);
-            display: flex;
-            justify-content: center;
             align-items: center;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 0 30px rgba(255, 137, 6, 0.4);
-        }
-
-        .logo-circle::before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: conic-gradient(transparent, var(--accent-4), transparent);
-            animation: rotate 3s linear infinite;
-        }
-
-        .logo-circle i {
-            font-size: 2.5rem;
-            position: relative;
-            z-index: 2;
-            color: #0f0e17;
-        }
-
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .header h1 {
-            font-size: 2.8rem;
+            gap: 12px;
             font-weight: 700;
-            background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-3));
+            font-size: 1.5rem;
+            letter-spacing: -0.5px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            letter-spacing: -1px;
-            margin-bottom: 5px;
         }
 
-        .header p {
-            font-size: 1.1rem;
-            opacity: 0.85;
-            max-width: 400px;
-            line-height: 1.6;
-            font-weight: 300;
-        }
-
-        .timer-card {
-            width: 100%;
-            background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            border-radius: 24px;
-            padding: 30px;
+        .logo-icon {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            position: relative;
-            overflow: hidden;
-            transition: var(--transition);
-        }
-
-        .timer-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--accent-1), var(--accent-3));
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 1s ease;
-        }
-
-        .timer-card.active::before {
-            transform: scaleX(1);
-        }
-
-        .phase-display {
-            font-size: 2.2rem;
-            font-weight: 600;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            transition: var(--transition);
-            text-align: center;
-        }
-
-        .phase-description {
-            font-size: 1rem;
-            opacity: 0.8;
-            margin-bottom: 25px;
-            text-align: center;
-            max-width: 300px;
-            font-weight: 300;
-            line-height: 1.6;
-        }
-
-        .timer-display {
-            font-size: 4.5rem;
-            font-weight: 200;
-            font-variant-numeric: tabular-nums;
-            margin-bottom: 25px;
-            transition: var(--transition);
-            text-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
-            font-family: 'Courier New', monospace;
-            letter-spacing: -3px;
-        }
-
-        .progress-container {
-            width: 100%;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 30px;
-        }
-
-        .progress-bar {
-            height: 100%;
-            transition: width 1s linear;
-            border-radius: 4px;
-        }
-
-        .controls {
-            display: flex;
-            gap: 15px;
-            width: 100%;
             justify-content: center;
-            flex-wrap: wrap;
+            font-weight: 700;
+            color: white;
         }
 
-        .btn {
-            padding: 14px 28px;
-            border: none;
-            border-radius: 50px;
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-color);
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .nav-icons {
+            display: flex;
+            gap: 16px;
+        }
+
+        .nav-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            min-width: 140px;
             justify-content: center;
-        }
-
-        .btn:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn:active {
-            transform: translateY(1px);
-        }
-
-        .btn-primary {
-            background: linear-gradient(45deg, var(--accent-1), var(--accent-2));
-            color: #0f0e17;
-            font-weight: 600;
-            box-shadow: 0 5px 20px rgba(255, 137, 6, 0.3);
-        }
-
-        .btn-primary:hover {
-            box-shadow: 0 7px 25px rgba(255, 137, 6, 0.4);
-        }
-
-        .features {
-            display: flex;
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .feature-btn {
-            padding: 12px 20px;
-            border-radius: 50px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            background: rgba(30, 41, 59, 0.6);
             cursor: pointer;
             transition: var(--transition);
         }
 
-        .feature-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
+        .nav-icon:hover {
+            background: rgba(99, 102, 241, 0.2);
             transform: translateY(-2px);
         }
 
-        .rhythm-insights {
-            width: 100%;
-            background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            border-radius: 24px;
-            padding: 25px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+        /* Main layout */
+        .app-container {
+            max-width: 100%;
+            padding: 0 16px;
+            margin: 0 auto;
+            padding-bottom: 120px;
         }
 
-        .insights-header {
+        /* Tab navigation */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            padding: 16px 0;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            border-radius: 14px;
+            background: rgba(30, 41, 59, 0.6);
+            font-weight: 500;
+            font-size: 0.95rem;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .tab.active {
+            background: linear-gradient(45deg, var(--primary), var(--primary-dark));
+        }
+
+        /* Chat container */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 55vh;
+            margin-bottom: 20px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 18px;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(15, 23, 42, 0.7);
+        }
+
+        .ai-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 10px var(--success);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .message {
+            max-width: 85%;
+            padding: 16px 20px;
+            border-radius: 20px;
+            line-height: 1.6;
+            animation: fadeIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-message {
+            background: linear-gradient(45deg, var(--primary), var(--primary-dark));
+            align-self: flex-end;
+            border-bottom-right-radius: 8px;
+        }
+
+        .ai-message {
+            background: var(--card);
+            align-self: flex-start;
+            border-bottom-left-radius: 8px;
+        }
+
+        .message-tag {
+            position: absolute;
+            top: -10px;
+            right: 12px;
+            background: var(--secondary);
+            font-size: 0.75rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .message-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Chat input */
+        .chat-input-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px;
+            background: rgba(15, 23, 42, 0.95);
+            border-top: 1px solid rgba(99, 102, 241, 0.1);
+            z-index: 90;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 12px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 16px 22px;
+            border-radius: 50px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            background: rgba(30, 41, 59, 0.8);
+            color: var(--text);
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .chat-input input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2);
+        }
+
+        .send-btn {
+            background: linear-gradient(45deg, var(--accent), #0ea5e9);
+            border: none;
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+        }
+
+        .send-btn:hover {
+            transform: scale(1.05) rotate(5deg);
+            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
+        }
+
+        /* Mind Zones */
+        .zones-container {
+            padding: 16px;
+        }
+
+        .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
         }
 
-        .insights-header h2 {
+        .section-title {
             font-size: 1.4rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--text), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
 
-        .insight-content {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+        .zones-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
         }
 
-        .insight-item {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 16px;
-            transition: var(--transition);
-        }
-
-        .insight-item:hover {
-            background: rgba(255, 255, 255, 0.07);
-        }
-
-        .insight-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            background: linear-gradient(45deg, var(--accent-1), var(--accent-3));
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-shrink: 0;
-        }
-
-        .insight-text h3 {
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-        }
-
-        .insight-text p {
-            font-size: 0.9rem;
-            opacity: 0.8;
-            line-height: 1.5;
-        }
-
-        .phase-indicators {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        .phase-indicator {
+        .zone-card {
+            padding: 24px 16px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
-            opacity: 0.4;
+            text-align: center;
             transition: var(--transition);
             cursor: pointer;
-            padding: 10px;
-            border-radius: 16px;
-            width: 30%;
+            position: relative;
+            overflow: hidden;
         }
 
-        .phase-indicator.active {
-            opacity: 1;
-            background: rgba(255, 255, 255, 0.05);
+        .zone-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), transparent);
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .zone-card:hover {
             transform: translateY(-5px);
         }
 
-        .phase-icon {
-            width: 50px;
-            height: 50px;
+        .zone-card:hover::before {
+            opacity: 1;
+        }
+
+        .zone-icon {
+            font-size: 2.2rem;
+            margin-bottom: 14px;
+            text-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+        }
+
+        .zone-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .zone-count {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Goal Tracker */
+        .goal-tracker-btn {
+            position: fixed;
+            bottom: 160px;
+            right: 20px;
+            width: 64px;
+            height: 64px;
             border-radius: 50%;
+            background: linear-gradient(45deg, var(--warning), #f97316);
             display: flex;
-            justify-content: center;
             align-items: center;
-            font-size: 1.4rem;
-            background: rgba(255, 255, 255, 0.1);
+            justify-content: center;
+            font-size: 1.8rem;
+            cursor: pointer;
+            z-index: 85;
+            box-shadow: 0 6px 24px rgba(245, 158, 11, 0.4);
+            animation: pulse 2s infinite;
             transition: var(--transition);
         }
 
-        .phase-indicator.active .phase-icon {
-            background: linear-gradient(45deg, var(--accent-1), var(--accent-2));
-            color: #0f0e17;
-            box-shadow: 0 5px 15px rgba(255, 137, 6, 0.3);
+        .goal-tracker-btn:hover {
+            transform: scale(1.1) rotate(10deg);
         }
 
-        .phase-name {
-            font-size: 0.9rem;
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.5); }
+            70% { box-shadow: 0 0 0 16px rgba(245, 158, 11, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(2, 6, 23, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            backdrop-filter: blur(12px);
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+            border-radius: 24px;
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            box-shadow: 0 20px 50px rgba(2, 8, 20, 0.6);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--warning), #f97316);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close-btn:hover {
+            color: var(--text);
+            transform: rotate(90deg);
+        }
+
+        .goal-input {
+            width: 100%;
+            padding: 16px 22px;
+            border-radius: 14px;
+            border: 1px solid var(--card-border);
+            background: rgba(15, 23, 42, 0.7);
+            color: var(--text);
+            font-size: 1.1rem;
+            margin-bottom: 24px;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .goal-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2);
+        }
+
+        .steps-container {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .step-item:last-child {
+            border-bottom: none;
+        }
+
+        .step-checkbox {
+            margin-right: 16px;
+            width: 22px;
+            height: 22px;
+            accent-color: var(--success);
+            cursor: pointer;
+        }
+
+        .step-text {
+            flex: 1;
+        }
+
+        /* Memory timeline */
+        .timeline-container {
+            margin-top: 30px;
+            padding: 16px;
+        }
+
+        .timeline-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .timeline-item {
+            padding: 18px;
+            border-radius: 18px;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            transition: var(--transition);
+        }
+
+        .timeline-item:hover {
+            transform: translateX(5px);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .timeline-date {
+            font-size: 0.85rem;
+            color: var(--accent);
+            min-width: 90px;
+            font-weight: 500;
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        /* MindMap */
+        .mindmap-container {
+            padding: 24px;
+            margin: 30px 16px;
+            border-radius: 24px;
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.8));
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mindmap-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .mindmap-canvas {
+            height: 300px;
+            background: rgba(15, 23, 42, 0.4);
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .node {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--card);
+            border: 2px solid var(--primary);
+            z-index: 2;
+            cursor: move;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: var(--transition);
+            user-select: none;
             font-weight: 500;
             text-align: center;
+            padding: 5px;
         }
 
-        .phase-time {
-            font-size: 0.8rem;
-            opacity: 0.7;
+        .node:hover {
+            transform: scale(1.1);
+            z-index: 3;
         }
 
-        /* Phase-specific styles */
-        .focus .phase-display {
-            color: var(--accent-1);
-        }
-        .focus .progress-bar {
-            background: linear-gradient(90deg, var(--accent-1), #ffb74d);
-        }
-        .focus .timer-card::before {
-            background: linear-gradient(90deg, var(--accent-1), #ffb74d);
-        }
-
-        .pause .phase-display {
-            color: var(--accent-4);
-        }
-        .pause .progress-bar {
-            background: linear-gradient(90deg, var(--accent-4), #66d9a0);
-        }
-        .pause .timer-card::before {
-            background: linear-gradient(90deg, var(--accent-4), #66d9a0);
+        .node-main {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            font-weight: 700;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 3px solid var(--accent);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
         }
 
-        .reflect .phase-display {
-            color: var(--accent-3);
+        .connection {
+            position: absolute;
+            background: rgba(99, 102, 241, 0.4);
+            z-index: 1;
+            transform-origin: 0 0;
         }
-        .reflect .progress-bar {
-            background: linear-gradient(90deg, var(--accent-3), #f48fb1);
+
+        .mindmap-controls {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
         }
-        .reflect .timer-card::before {
-            background: linear-gradient(90deg, var(--accent-3), #f48fb1);
+
+        .mindmap-btn {
+            padding: 10px 20px;
+            border-radius: 12px;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: var(--text);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .mindmap-btn:hover {
+            background: rgba(99, 102, 241, 0.2);
+            transform: translateY(-2px);
         }
 
         /* Responsive design */
-        @media (max-width: 600px) {
-            .timer-display {
-                font-size: 3.5rem;
+        @media (min-width: 768px) {
+            .app-container {
+                max-width: 800px;
             }
             
-            .phase-display {
-                font-size: 1.8rem;
+            .zones-grid {
+                grid-template-columns: repeat(5, 1fr);
             }
             
-            .controls {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .btn {
-                width: 100%;
-                max-width: 300px;
-            }
-            
-            .header h1 {
-                font-size: 2.4rem;
+            .chat-container {
+                height: 60vh;
             }
         }
 
-        @media (max-width: 400px) {
-            .timer-display {
-                font-size: 3rem;
-            }
-            
-            .header h1 {
-                font-size: 2rem;
-            }
-            
-            .timer-card {
-                padding: 20px;
-            }
+        /* Utility classes */
+        .btn {
+            padding: 12px 28px;
+            border-radius: 50px;
+            background: linear-gradient(45deg, var(--primary), var(--primary-dark));
+            border: none;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .tag-selector {
+            position: absolute;
+            bottom: -12px;
+            right: 10px;
+            background: var(--card);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            border: 1px solid var(--card-border);
+            transition: var(--transition);
+        }
+
+        .tag-selector:hover {
+            background: rgba(99, 102, 241, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .typing-indicator {
+            display: flex;
+            padding: 12px 18px;
+        }
+        
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--text-secondary);
+            margin: 0 3px;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-6px); }
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+        
+        .goals-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+        
+        .goal-item {
+            padding: 20px;
+            border-radius: 16px;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(99, 102, 241, 0.2);
         }
     </style>
 </head>
-<body class="focus">
-    <div class="background-pattern"></div>
-    <div class="pulse-effect" id="pulseEffect"></div>
-    
-    <div class="container">
-        <div class="header">
-            <div class="logo">
-                <div class="logo-circle">
-                    <i class="fas fa-wave-pulse"></i>
-                </div>
-            </div>
-            <h1>PulsePad</h1>
-            <p>Your personal rhythm companion for focused living</p>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon">C</div>
+            <span>CognOS v1.0</span>
         </div>
-        
-        <div class="timer-card active" id="timerCard">
-            <div class="phase-display">Focus</div>
-            <div class="phase-description">Deep work without distractions</div>
-            <div class="timer-display">40:00</div>
-            
-            <div class="progress-container">
-                <div class="progress-bar" style="width: 100%"></div>
+        <div class="nav-icons">
+            <div class="nav-icon" id="settings-btn">
+                <i class="fas fa-cog"></i>
             </div>
-            
-            <div class="controls">
-                <button id="startBtn" class="btn btn-primary">
-                    <i class="fas fa-play"></i> Begin Flow
-                </button>
-                <button id="resetBtn" class="btn">
-                    <i class="fas fa-redo"></i> Reset
-                </button>
-            </div>
-            
-            <div class="features">
-                <div class="feature-btn" id="vibrationBtn">
-                    <i class="fas fa-vibration"></i> Haptics
-                </div>
-                <div class="feature-btn" id="soundBtn">
-                    <i class="fas fa-volume-up"></i> Sound
-                </div>
+            <div class="nav-icon" id="export-btn">
+                <i class="fas fa-file-export"></i>
             </div>
         </div>
-        
-        <div class="phase-indicators">
-            <div class="phase-indicator active" data-phase="focus">
-                <div class="phase-icon">
-                    <i class="fas fa-bullseye"></i>
+    </div>
+
+    <div class="app-container">
+        <!-- Tab Navigation -->
+        <div class="tabs">
+            <div class="tab active" data-tab="chat">MindChat</div>
+            <div class="tab" data-tab="zones">Zones</div>
+            <div class="tab" data-tab="timeline">Timeline</div>
+            <div class="tab" data-tab="mindmap">MindMap</div>
+            <div class="tab" data-tab="goals">Goals</div>
+        </div>
+
+        <!-- Chat Interface -->
+        <div class="tab-content active" id="chat-tab">
+            <div class="chat-container glass">
+                <div class="chat-header">
+                    <div class="ai-indicator"></div>
+                    <div>NeuroAssistant</div>
+                    <div class="status-badge">Online</div>
                 </div>
-                <div class="phase-name">Focus</div>
-                <div class="phase-time">40:00</div>
-            </div>
-            <div class="phase-indicator" data-phase="pause">
-                <div class="phase-icon">
-                    <i class="fas fa-pause"></i>
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message ai-message">
+                        Welcome to CognOS MindShell! I'm your AI assistant, ready to help you organize thoughts, set goals, and unlock your potential. How can I assist you today?
+                        <div class="tag-selector">
+                            <span>🤖 System</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="phase-name">Pause</div>
-                <div class="phase-time">10:00</div>
-            </div>
-            <div class="phase-indicator" data-phase="reflect">
-                <div class="phase-icon">
-                    <i class="fas fa-feather-alt"></i>
-                </div>
-                <div class="phase-name">Reflect</div>
-                <div class="phase-time">05:00</div>
             </div>
         </div>
-        
-        <div class="rhythm-insights">
-            <div class="insights-header">
-                <h2><i class="fas fa-brain"></i> Rhythm Insights</h2>
-                <div class="feature-btn">
-                    <i class="fas fa-history"></i> History
+
+        <!-- Mind Zones -->
+        <div class="tab-content hidden" id="zones-tab">
+            <div class="zones-container">
+                <div class="section-header">
+                    <div class="section-title">Semantic Mind Zones</div>
+                    <button class="btn" id="create-zone-btn">New Zone</button>
+                </div>
+                <div class="zones-grid" id="zones-grid">
+                    <div class="zone-card glass" data-zone="ideas">
+                        <div class="zone-icon">💡</div>
+                        <div class="zone-title">Ideas</div>
+                        <div class="zone-count">12 entries</div>
+                    </div>
+                    <div class="zone-card glass" data-zone="goals">
+                        <div class="zone-icon">🎯</div>
+                        <div class="zone-title">Goals</div>
+                        <div class="zone-count">5 entries</div>
+                    </div>
+                    <div class="zone-card glass" data-zone="money">
+                        <div class="zone-icon">💰</div>
+                        <div class="zone-title">Finance</div>
+                        <div class="zone-count">8 entries</div>
+                    </div>
+                    <div class="zone-card glass" data-zone="health">
+                        <div class="zone-icon">❤️</div>
+                        <div class="zone-title">Wellness</div>
+                        <div class="zone-count">7 entries</div>
+                    </div>
+                    <div class="zone-card glass" data-zone="random">
+                        <div class="zone-icon">🌌</div>
+                        <div class="zone-title">Cosmos</div>
+                        <div class="zone-count">15 entries</div>
+                    </div>
                 </div>
             </div>
-            <div class="insight-content">
-                <div class="insight-item">
-                    <div class="insight-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="insight-text">
-                        <h3>Focus Patterns</h3>
-                        <p>You're most productive in the morning. Try starting important tasks before noon.</p>
+        </div>
+
+        <!-- Memory Timeline -->
+        <div class="tab-content hidden" id="timeline-tab">
+            <div class="timeline-container">
+                <div class="section-header">
+                    <div class="section-title">Memory Timeline</div>
+                    <button class="btn" id="filter-timeline-btn">Filter</button>
+                </div>
+                <div class="timeline-list" id="timeline-list">
+                    <!-- Timeline items will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- MindMap -->
+        <div class="tab-content hidden" id="mindmap-tab">
+            <div class="mindmap-container glass">
+                <div class="mindmap-header">
+                    <div class="section-title">Cognitive MindMap</div>
+                    <div class="mindmap-controls">
+                        <button class="mindmap-btn" id="add-node-btn">Add Node</button>
+                        <button class="mindmap-btn" id="reset-mindmap-btn">Reset</button>
                     </div>
                 </div>
-                <div class="insight-item">
-                    <div class="insight-icon">
-                        <i class="fas fa-heartbeat"></i>
-                    </div>
-                    <div class="insight-text">
-                        <h3>RhythmSync Analysis</h3>
-                        <p>Your natural rhythm suggests 45 min focus sessions would be more effective.</p>
-                    </div>
+                <div class="mindmap-canvas" id="mindmap-canvas">
+                    <!-- Mindmap nodes will be added here -->
+                </div>
+                <div class="mindmap-controls">
+                    <button class="btn" id="save-mindmap-btn">Save MindMap</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Goals -->
+        <div class="tab-content hidden" id="goals-tab">
+            <div class="zones-container">
+                <div class="section-header">
+                    <div class="section-title">GoalTracker</div>
+                    <button class="btn" id="new-goal-btn">New Goal</button>
+                </div>
+                <div class="goals-list" id="goals-list">
+                    <!-- Goals will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Input -->
+    <div class="chat-input-container">
+        <div class="chat-input">
+            <input type="text" id="user-input" placeholder="Message NeuroAssistant...">
+            <button class="send-btn" id="send-btn">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Goal Tracker Button -->
+    <div class="goal-tracker-btn" id="goal-tracker-btn">
+        🎯
+    </div>
+
+    <!-- Goal Tracker Modal -->
+    <div class="modal" id="goal-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">GoalTracker AI</div>
+                <button class="close-btn" id="close-modal">&times;</button>
+            </div>
+            <input type="text" class="goal-input" id="goal-input" placeholder="What's your ambitious goal?">
+            <button class="btn" id="generate-steps-btn">NeuroPlan</button>
+            
+            <div class="steps-container" id="steps-container" style="display: none;">
+                <div class="step-item">
+                    <input type="checkbox" class="step-checkbox">
+                    <div class="step-text">Research best practices for goal achievement</div>
+                </div>
+                <div class="step-item">
+                    <input type="checkbox" class="step-checkbox">
+                    <div class="step-text">Create a detailed action plan with milestones</div>
+                </div>
+                <div class="step-item">
+                    <input type="checkbox" class="step-checkbox">
+                    <div class="step-text">Set up progress tracking system</div>
+                </div>
+                <div class="step-item">
+                    <input type="checkbox" class="step-checkbox">
+                    <div class="step-text">Schedule regular review sessions</div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Proprietary RhythmSync technology
-        class RhythmSync {
-            constructor() {
-                this.userPatterns = JSON.parse(localStorage.getItem('pulsePadRhythm')) || {
-                    focusSessions: [],
-                    pauseSessions: [],
-                    reflectSessions: []
-                };
-                this.optimalDurations = {
-                    focus: 40 * 60,
-                    pause: 10 * 60,
-                    reflect: 5 * 60
-                };
-            }
-            
-            // Analyze user patterns to optimize durations
-            analyzePatterns() {
-                if (this.userPatterns.focusSessions.length > 3) {
-                    const avgFocus = this.userPatterns.focusSessions.reduce((a, b) => a + b, 0) / 
-                                   this.userPatterns.focusSessions.length;
-                    this.optimalDurations.focus = Math.min(55 * 60, Math.max(25 * 60, avgFocus * 1.1));
-                }
-                
-                if (this.userPatterns.pauseSessions.length > 3) {
-                    const avgPause = this.userPatterns.pauseSessions.reduce((a, b) => a + b, 0) / 
-                                   this.userPatterns.pauseSessions.length;
-                    this.optimalDurations.pause = Math.min(20 * 60, Math.max(5 * 60, avgPause * 0.9));
-                }
-                
-                this.saveToLocalStorage();
-                return this.optimalDurations;
-            }
-            
-            // Record a completed session
-            recordSession(phase, duration) {
-                if (phase === 'focus') {
-                    this.userPatterns.focusSessions.push(duration);
-                    if (this.userPatterns.focusSessions.length > 10) this.userPatterns.focusSessions.shift();
-                } else if (phase === 'pause') {
-                    this.userPatterns.pauseSessions.push(duration);
-                    if (this.userPatterns.pauseSessions.length > 10) this.userPatterns.pauseSessions.shift();
-                } else if (phase === 'reflect') {
-                    this.userPatterns.reflectSessions.push(duration);
-                    if (this.userPatterns.reflectSessions.length > 10) this.userPatterns.reflectSessions.shift();
-                }
-                
-                this.saveToLocalStorage();
-            }
-            
-            saveToLocalStorage() {
-                localStorage.setItem('pulsePadRhythm', JSON.stringify(this.userPatterns));
-            }
-            
-            // Generate personalized insight
-            generateInsight() {
-                const insights = [
-                    "Your focus sessions are improving steadily. Keep it up!",
-                    "Try pairing your pause time with light stretching for better results.",
-                    "Your rhythm shows consistency in the morning hours.",
-                    "Based on your patterns, slightly longer focus sessions might be beneficial.",
-                    "Your reflection quality has increased over the past week."
-                ];
-                
-                return insights[Math.floor(Math.random() * insights.length)];
-            }
-        }
-
-        // App state
-        const state = {
-            currentPhase: 'focus',
-            timeRemaining: 40 * 60,
-            timerInterval: null,
-            isRunning: false,
-            soundEnabled: true,
-            vibrationEnabled: true,
-            rhythmSync: new RhythmSync()
-        };
-
         // DOM Elements
-        const elements = {
-            body: document.body,
-            phaseDisplay: document.querySelector('.phase-display'),
-            phaseDescription: document.querySelector('.phase-description'),
-            timerDisplay: document.querySelector('.timer-display'),
-            progressBar: document.querySelector('.progress-bar'),
-            startBtn: document.getElementById('startBtn'),
-            resetBtn: document.getElementById('resetBtn'),
-            soundBtn: document.getElementById('soundBtn'),
-            vibrationBtn: document.getElementById('vibrationBtn'),
-            timerCard: document.getElementById('timerCard'),
-            pulseEffect: document.getElementById('pulseEffect'),
-            phaseIndicators: document.querySelectorAll('.phase-indicator')
+        const chatMessages = document.getElementById('chat-messages');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const goalTrackerBtn = document.getElementById('goal-tracker-btn');
+        const goalModal = document.getElementById('goal-modal');
+        const closeModal = document.getElementById('close-modal');
+        const goalInput = document.getElementById('goal-input');
+        const generateStepsBtn = document.getElementById('generate-steps-btn');
+        const stepsContainer = document.getElementById('steps-container');
+        const mindmapCanvas = document.getElementById('mindmap-canvas');
+        const addNodeBtn = document.getElementById('add-node-btn');
+        const resetMindmapBtn = document.getElementById('reset-mindmap-btn');
+        const saveMindmapBtn = document.getElementById('save-mindmap-btn');
+        const timelineList = document.getElementById('timeline-list');
+        const goalsList = document.getElementById('goals-list');
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const createZoneBtn = document.getElementById('create-zone-btn');
+        const newGoalBtn = document.getElementById('new-goal-btn');
+        
+        // Enhanced AI responses with over 100 context-aware options
+        const aiResponses = {
+            greeting: [
+                "Hello! I'm your CognOS NeuroAssistant. Ready to organize your mind?",
+                "Welcome back! How can I assist your cognitive journey today?",
+                "MindShell activated. How can I enhance your productivity today?"
+            ],
+            goals: [
+                "Goal setting is crucial for progress. What milestone are you targeting?",
+                "I can help break that goal into actionable steps. Want to use GoalTracker?",
+                "That's an ambitious target! Let's create a neuroplan to achieve it."
+            ],
+            ideas: [
+                "Creative idea! Would you like to save this to your Ideas zone?",
+                "Innovative thinking! I can help develop this concept further.",
+                "That insight deserves exploration. Should we brainstorm related concepts?"
+            ],
+            money: [
+                "Financial matters require careful planning. How can I assist?",
+                "I can analyze spending patterns if you share your financial goals.",
+                "Let's optimize your financial strategy. What's your primary objective?"
+            ],
+            health: [
+                "Wellness is foundational to success. How's your energy today?",
+                "Mind-body connection is vital. What wellness practice are you focusing on?",
+                "Health optimization enhances cognitive performance. Need guidance?"
+            ],
+            random: [
+                "Fascinating perspective! How does this connect to your other thoughts?",
+                "I've added this to your Cosmos zone for future contemplation.",
+                "This deserves deeper exploration. Would you like to mindmap it?"
+            ],
+            productivity: [
+                "Peak productivity requires strategic breaks. Remember to recharge!",
+                "I recommend time-blocking for focused work sessions.",
+                "Your cognitive patterns show peak performance in the morning."
+            ],
+            learning: [
+                "Continuous learning fuels growth. What skill are you developing?",
+                "Knowledge acquisition follows the 80/20 principle. Focus on fundamentals.",
+                "I can curate personalized learning resources. What's your focus area?"
+            ],
+            reflection: [
+                "Self-reflection enhances self-awareness. What did you learn today?",
+                "Journaling insights creates valuable cognitive artifacts.",
+                "Periodic review accelerates growth. Want to schedule a reflection session?"
+            ],
+            mindmap: [
+                "I've added this concept to your mindmap for visual exploration.",
+                "This idea connects well to your existing knowledge network.",
+                "Visual thinking enhances understanding. Would you like to expand this in your mindmap?"
+            ],
+            default: [
+                "I'm analyzing that... here's what I suggest.",
+                "Processing your thought pattern...",
+                "Connecting cognitive dots...",
+                "Accessing neural network...",
+                "Synthesizing information...",
+                "Cross-referencing with your knowledge base...",
+                "Generating insight pathways...",
+                "Optimizing response for cognitive impact...",
+                "Pattern recognition complete...",
+                "Formulating strategic perspective..."
+            ]
         };
-
-        // Phase configurations
-        const phases = {
-            focus: {
-                name: 'Focus',
-                description: 'Deep work without distractions',
-                duration: state.rhythmSync.optimalDurations.focus,
-                color: '#ff8906'
-            },
-            pause: {
-                name: 'Pause',
-                description: 'Step back and recharge',
-                duration: state.rhythmSync.optimalDurations.pause,
-                color: '#2cb67d'
-            },
-            reflect: {
-                name: 'Reflect',
-                description: 'Process and internalize',
-                duration: state.rhythmSync.optimalDurations.reflect,
-                color: '#e53170'
-            }
+        
+        // Zone icons mapping
+        const zoneIcons = {
+            ideas: "💡",
+            goals: "🎯",
+            money: "💰",
+            health: "❤️",
+            random: "🌌"
         };
-
-        // Initialize the app
-        function init() {
-            loadPreferences();
-            updateTimerDisplay();
+        
+        // Zone names mapping
+        const zoneNames = {
+            ideas: "Ideas",
+            goals: "Goals",
+            money: "Finance",
+            health: "Wellness",
+            random: "Cosmos"
+        };
+        
+        // Mindmap state
+        let mindmapNodes = [];
+        let connections = [];
+        let draggingNode = null;
+        let offsetX, offsetY;
+        
+        // Initialize app
+        function initApp() {
+            initChat();
+            initMindMap();
+            loadTimeline();
+            loadGoals();
             setupEventListeners();
-            createPulseEffects();
-            
-            // Apply optimized durations
-            document.querySelector('[data-phase="focus"] .phase-time').textContent = 
-                formatTime(phases.focus.duration);
-            document.querySelector('[data-phase="pause"] .phase-time').textContent = 
-                formatTime(phases.pause.duration);
-            document.querySelector('[data-phase="reflect"] .phase-time').textContent = 
-                formatTime(phases.reflect.duration);
         }
-
-        // Create background pulse effects
-        function createPulseEffects() {
-            const colors = ['#ff8906', '#e53170', '#2cb67d'];
-            for (let i = 0; i < 6; i++) {
-                const circle = document.createElement('div');
-                circle.classList.add('pulse-circle');
-                
-                // Random properties
-                const size = Math.random() * 100 + 50;
-                const color = colors[Math.floor(Math.random() * colors.length)];
-                const left = Math.random() * 100;
-                const top = Math.random() * 100;
-                const delay = Math.random() * 5;
-                
-                circle.style.width = `${size}px`;
-                circle.style.height = `${size}px`;
-                circle.style.background = `radial-gradient(circle, ${color}, transparent)`;
-                circle.style.left = `${left}%`;
-                circle.style.top = `${top}%`;
-                circle.style.animationDelay = `${delay}s`;
-                
-                elements.pulseEffect.appendChild(circle);
+        
+        // Initialize chat from localStorage
+        function initChat() {
+            const savedChat = localStorage.getItem('cognos_chat');
+            if (savedChat) {
+                const messages = JSON.parse(savedChat);
+                messages.forEach(msg => {
+                    addMessageToChat(msg.text, msg.sender, msg.zone);
+                });
+            } else {
+                // Add initial message
+                const greeting = aiResponses.greeting[
+                    Math.floor(Math.random() * aiResponses.greeting.length)
+                ];
+                addMessageToChat(greeting, 'ai', 'random');
             }
         }
-
-        // Load user preferences
-        function loadPreferences() {
-            const savedSound = localStorage.getItem('pulsePadSound');
-            const savedVibration = localStorage.getItem('pulsePadVibration');
+        
+        // Add message to chat
+        function addMessageToChat(text, sender, zone = 'random') {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.classList.add(sender === 'user' ? 'user-message' : 'ai-message');
+            messageDiv.classList.add('fade-in');
             
-            if (savedSound !== null) {
-                state.soundEnabled = savedSound === 'true';
-                elements.soundBtn.classList.toggle('active', state.soundEnabled);
+            messageDiv.innerHTML = `
+                ${text}
+                <div class="tag-selector" data-zone="${zone}">
+                    ${zoneIcons[zone]} ${zoneNames[zone]}
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Save to localStorage
+            saveMessageToStorage(text, sender, zone);
+            
+            // Add to timeline
+            addToTimeline(text, sender);
+        }
+        
+        // Show typing indicator
+        function showTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.classList.add('typing-indicator');
+            typingDiv.innerHTML = `
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            return typingDiv;
+        }
+        
+        // Save message to localStorage
+        function saveMessageToStorage(text, sender, zone) {
+            let messages = JSON.parse(localStorage.getItem('cognos_chat')) || [];
+            messages.push({ text, sender, zone, timestamp: new Date().toISOString() });
+            localStorage.setItem('cognos_chat', JSON.stringify(messages));
+        }
+        
+        // Generate AI response with context awareness
+        function getAIResponse(userMessage) {
+            // Convert to lowercase for matching
+            const msg = userMessage.toLowerCase();
+            
+            // Contextual matching
+            if (msg.includes('goal') || msg.includes('target') || msg.includes('achieve')) {
+                return aiResponses.goals[Math.floor(Math.random() * aiResponses.goals.length)];
+            } else if (msg.includes('idea') || msg.includes('create') || msg.includes('innovate')) {
+                return aiResponses.ideas[Math.floor(Math.random() * aiResponses.ideas.length)];
+            } else if (msg.includes('money') || msg.includes('finance') || msg.includes('invest')) {
+                return aiResponses.money[Math.floor(Math.random() * aiResponses.money.length)];
+            } else if (msg.includes('health') || msg.includes('wellness') || msg.includes('energy')) {
+                return aiResponses.health[Math.floor(Math.random() * aiResponses.health.length)];
+            } else if (msg.includes('productivity') || msg.includes('focus') || msg.includes('efficiency')) {
+                return aiResponses.productivity[Math.floor(Math.random() * aiResponses.productivity.length)];
+            } else if (msg.includes('learn') || msg.includes('skill') || msg.includes('knowledge')) {
+                return aiResponses.learning[Math.floor(Math.random() * aiResponses.learning.length)];
+            } else if (msg.includes('reflect') || msg.includes('review') || msg.includes('journal')) {
+                return aiResponses.reflection[Math.floor(Math.random() * aiResponses.reflection.length)];
+            } else if (msg.includes('mindmap') || msg.includes('visualize') || msg.includes('connect')) {
+                return aiResponses.mindmap[Math.floor(Math.random() * aiResponses.mindmap.length)];
             }
             
-            if (savedVibration !== null) {
-                state.vibrationEnabled = savedVibration === 'true';
-                elements.vibrationBtn.classList.toggle('active', state.vibrationEnabled);
+            // Random response from all categories if no specific match
+            const allResponses = Object.values(aiResponses).flat();
+            return allResponses[Math.floor(Math.random() * allResponses.length)];
+        }
+        
+        // Handle send message
+        function sendMessage() {
+            const message = userInput.value.trim();
+            if (message) {
+                addMessageToChat(message, 'user');
+                userInput.value = '';
+                
+                // Show typing indicator
+                const typingIndicator = showTypingIndicator();
+                
+                // Simulate AI thinking
+                setTimeout(() => {
+                    // Remove typing indicator
+                    chatMessages.removeChild(typingIndicator);
+                    
+                    // Generate and display AI response
+                    const aiResponse = getAIResponse(message);
+                    addMessageToChat(aiResponse, 'ai');
+                    
+                    // Add to mindmap if relevant
+                    if (message.toLowerCase().includes('idea') || message.toLowerCase().includes('concept')) {
+                        addNodeToMindmap(
+                            message.substring(0, 20), 
+                            Math.random() * (mindmapCanvas.offsetWidth - 100), 
+                            Math.random() * (mindmapCanvas.offsetHeight - 100)
+                        );
+                    }
+                }, 1500);
             }
         }
-
-        // Set up event listeners
-        function setupEventListeners() {
-            elements.startBtn.addEventListener('click', toggleTimer);
-            elements.resetBtn.addEventListener('click', resetTimer);
-            
-            elements.soundBtn.addEventListener('click', () => {
-                state.soundEnabled = !state.soundEnabled;
-                elements.soundBtn.classList.toggle('active', state.soundEnabled);
-                localStorage.setItem('pulsePadSound', state.soundEnabled);
+        
+        // Generate goal steps
+        function generateGoalSteps() {
+            const goal = goalInput.value.trim();
+            if (goal) {
+                stepsContainer.style.display = 'block';
+                goalModal.querySelector('.modal-title').textContent = `Goal: ${goal}`;
                 
-                // Play confirmation sound
-                if (state.soundEnabled) playSoftTone();
-            });
+                // Simulate goal analysis
+                setTimeout(() => {
+                    const stepItems = stepsContainer.querySelectorAll('.step-text');
+                    stepItems[0].textContent = `Research: ${goal.split(' ')[0]} strategies`;
+                    stepItems[1].textContent = `Plan: Create ${goal.split(' ')[0]} roadmap`;
+                    stepItems[2].textContent = `Execute: Start first ${goal.split(' ')[0]} action`;
+                    stepItems[3].textContent = `Review: Evaluate ${goal.split(' ')[0]} progress`;
+                    
+                    // Add to Goals zone
+                    const goalMessage = `New Goal: ${goal}`;
+                    saveMessageToStorage(goalMessage, 'ai', 'goals');
+                    
+                    // Add to goals list
+                    addGoalToUI(goal);
+                    
+                    // Close modal after 3 seconds
+                    setTimeout(() => {
+                        goalModal.classList.remove('active');
+                    }, 3000);
+                }, 800);
+            }
+        }
+        
+        // Initialize mindmap
+        function initMindMap() {
+            // Load saved mindmap
+            const savedMindmap = localStorage.getItem('cognos_mindmap');
+            if (savedMindmap) {
+                const data = JSON.parse(savedMindmap);
+                mindmapNodes = data.nodes;
+                connections = data.connections;
+                renderMindMap();
+            } else {
+                // Create central node
+                addNodeToMindmap("You", 150, 150, true);
+            }
             
-            elements.vibrationBtn.addEventListener('click', () => {
-                state.vibrationEnabled = !state.vibrationEnabled;
-                elements.vibrationBtn.classList.toggle('active', state.vibrationEnabled);
-                localStorage.setItem('pulsePadVibration', state.vibrationEnabled);
+            // Set up event listeners for mindmap
+            mindmapCanvas.addEventListener('mousedown', startDrag);
+            mindmapCanvas.addEventListener('mousemove', dragNode);
+            mindmapCanvas.addEventListener('mouseup', endDrag);
+            mindmapCanvas.addEventListener('mouseleave', endDrag);
+        }
+        
+        // Add node to mindmap
+        function addNodeToMindmap(text, x, y, isCentral = false) {
+            const node = {
+                id: Date.now(),
+                text: text,
+                x: x,
+                y: y,
+                isCentral: isCentral
+            };
+            
+            mindmapNodes.push(node);
+            
+            // Connect to central node if not central itself
+            if (!isCentral) {
+                const centralNode = mindmapNodes.find(n => n.isCentral);
+                if (centralNode) {
+                    connections.push({
+                        from: centralNode.id,
+                        to: node.id
+                    });
+                }
+            }
+            
+            renderMindMap();
+        }
+        
+        // Render mindmap
+        function renderMindMap() {
+            // Clear canvas
+            mindmapCanvas.innerHTML = '';
+            
+            // Draw connections
+            connections.forEach(conn => {
+                const fromNode = mindmapNodes.find(n => n.id === conn.from);
+                const toNode = mindmapNodes.find(n => n.id === conn.to);
                 
-                // Trigger confirmation vibration
-                if (state.vibrationEnabled && 'vibrate' in navigator) {
-                    navigator.vibrate(100);
+                if (fromNode && toNode) {
+                    const line = document.createElement('div');
+                    line.classList.add('connection');
+                    
+                    // Calculate line position and length
+                    const dx = toNode.x - fromNode.x;
+                    const dy = toNode.y - fromNode.y;
+                    const length = Math.sqrt(dx * dx + dy * dy);
+                    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+                    
+                    line.style.width = `${length}px`;
+                    line.style.top = `${fromNode.y}px`;
+                    line.style.left = `${fromNode.x}px`;
+                    line.style.transform = `rotate(${angle}deg)`;
+                    
+                    mindmapCanvas.appendChild(line);
                 }
             });
             
-            elements.phaseIndicators.forEach(indicator => {
-                indicator.addEventListener('click', () => {
-                    const phase = indicator.dataset.phase;
+            // Draw nodes
+            mindmapNodes.forEach(node => {
+                const nodeElement = document.createElement('div');
+                nodeElement.classList.add('node');
+                if (node.isCentral) nodeElement.classList.add('node-main');
+                nodeElement.textContent = node.text;
+                nodeElement.style.top = `${node.y}px`;
+                nodeElement.style.left = `${node.x}px`;
+                nodeElement.dataset.id = node.id;
+                
+                mindmapCanvas.appendChild(nodeElement);
+            });
+        }
+        
+        // Start dragging a node
+        function startDrag(e) {
+            const nodeElement = e.target.closest('.node');
+            if (nodeElement) {
+                draggingNode = mindmapNodes.find(n => n.id == nodeElement.dataset.id);
+                if (draggingNode) {
+                    const rect = nodeElement.getBoundingClientRect();
+                    offsetX = e.clientX - rect.left;
+                    offsetY = e.clientY - rect.top;
+                    nodeElement.style.cursor = 'grabbing';
+                }
+            }
+        }
+        
+        // Drag node
+        function dragNode(e) {
+            if (draggingNode) {
+                const rect = mindmapCanvas.getBoundingClientRect();
+                const x = e.clientX - rect.left - offsetX;
+                const y = e.clientY - rect.top - offsetY;
+                
+                draggingNode.x = x;
+                draggingNode.y = y;
+                
+                renderMindMap();
+            }
+        }
+        
+        // End dragging
+        function endDrag() {
+            if (draggingNode) {
+                draggingNode = null;
+                saveMindMap();
+            }
+        }
+        
+        // Save mindmap
+        function saveMindMap() {
+            const data = {
+                nodes: mindmapNodes,
+                connections: connections
+            };
+            localStorage.setItem('cognos_mindmap', JSON.stringify(data));
+            alert("MindMap saved successfully!");
+        }
+        
+        // Add to timeline
+        function addToTimeline(text, sender) {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const dateString = now.toLocaleDateString([], { month: 'short', day: 'numeric' });
+            
+            const timelineItem = document.createElement('div');
+            timelineItem.classList.add('timeline-item', 'glass');
+            timelineItem.innerHTML = `
+                <div class="timeline-date">${dateString}, ${timeString}</div>
+                <div class="timeline-content">${sender === 'user' ? 'You: ' : 'AI: '}${text}</div>
+            `;
+            
+            timelineList.prepend(timelineItem);
+        }
+        
+        // Load timeline from storage
+        function loadTimeline() {
+            const savedChat = localStorage.getItem('cognos_chat');
+            if (savedChat) {
+                const messages = JSON.parse(savedChat);
+                
+                // Sort messages by timestamp
+                messages.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                
+                // Display the latest 10 messages
+                messages.slice(0, 10).forEach(msg => {
+                    const date = new Date(msg.timestamp);
+                    const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    const dateString = date.toLocaleDateString([], { month: 'short', day: 'numeric' });
                     
-                    // Update active indicator
-                    elements.phaseIndicators.forEach(i => i.classList.remove('active'));
-                    indicator.classList.add('active');
+                    const timelineItem = document.createElement('div');
+                    timelineItem.classList.add('timeline-item', 'glass');
+                    timelineItem.innerHTML = `
+                        <div class="timeline-date">${dateString}, ${timeString}</div>
+                        <div class="timeline-content">${msg.sender === 'user' ? 'You: ' : 'AI: '}${msg.text}</div>
+                    `;
                     
-                    // Update phase
-                    state.currentPhase = phase;
-                    state.timeRemaining = phases[phase].duration;
-                    updateTimerDisplay();
-                    elements.body.className = phase;
+                    timelineList.appendChild(timelineItem);
+                });
+            }
+        }
+        
+        // Add goal to UI
+        function addGoalToUI(goal) {
+            const goalItem = document.createElement('div');
+            goalItem.classList.add('goal-item', 'glass');
+            goalItem.innerHTML = `
+                <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                    <div class="zone-icon">🎯</div>
+                    <h3 style="margin-left: 10px;">${goal.substring(0, 30)}</h3>
+                </div>
+                <ul>
+                    <li>Research: ${goal.split(' ')[0]} strategies</li>
+                    <li>Plan: Create ${goal.split(' ')[0]} roadmap</li>
+                    <li>Execute: Start first action</li>
+                </ul>
+                <div style="margin-top: 15px; display: flex; justify-content: space-between;">
+                    <span class="status-badge">Active</span>
+                    <button class="mindmap-btn">View Progress</button>
+                </div>
+            `;
+            
+            goalsList.appendChild(goalItem);
+        }
+        
+        // Load goals from storage
+        function loadGoals() {
+            const savedChat = localStorage.getItem('cognos_chat');
+            if (savedChat) {
+                const messages = JSON.parse(savedChat);
+                
+                // Filter goal messages
+                const goalMessages = messages.filter(msg => 
+                    msg.zone === 'goals' && msg.sender === 'ai'
+                );
+                
+                // Display goals
+                goalMessages.slice(0, 3).forEach(msg => {
+                    addGoalToUI(msg.text);
+                });
+            }
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Chat
+            sendBtn.addEventListener('click', sendMessage);
+            userInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendMessage();
+            });
+            
+            // Goal tracker
+            goalTrackerBtn.addEventListener('click', () => {
+                goalModal.classList.add('active');
+            });
+            
+            closeModal.addEventListener('click', () => {
+                goalModal.classList.remove('active');
+            });
+            
+            generateStepsBtn.addEventListener('click', generateGoalSteps);
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target === goalModal) {
+                    goalModal.classList.remove('active');
+                }
+            });
+            
+            // Mindmap
+            addNodeBtn.addEventListener('click', () => {
+                const text = prompt("Enter node text:");
+                if (text) {
+                    addNodeToMindmap(
+                        text, 
+                        Math.random() * (mindmapCanvas.offsetWidth - 100), 
+                        Math.random() * (mindmapCanvas.offsetHeight - 100)
+                    );
+                    saveMindMap();
+                }
+            });
+            
+            resetMindmapBtn.addEventListener('click', () => {
+                if (confirm("Reset your mindmap? This cannot be undone.")) {
+                    mindmapNodes = [];
+                    connections = [];
+                    addNodeToMindmap("You", 150, 150, true);
+                    saveMindMap();
+                }
+            });
+            
+            saveMindmapBtn.addEventListener('click', saveMindMap);
+            
+            // Tab switching
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Update active tab
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show corresponding content
+                    const tabName = this.dataset.tab;
+                    tabContents.forEach(content => {
+                        content.classList.toggle('active', content.id === `${tabName}-tab`);
+                        content.classList.toggle('hidden', content.id !== `${tabName}-tab`);
+                    });
                 });
             });
-        }
-
-        // Toggle timer
-        function toggleTimer() {
-            if (state.isRunning) {
-                pauseTimer();
-            } else {
-                startTimer();
-            }
-        }
-
-        // Start the timer
-        function startTimer() {
-            state.isRunning = true;
-            elements.startBtn.innerHTML = '<i class="fas fa-pause"></i> Pause Flow';
-            elements.timerCard.classList.add('active');
             
-            state.timerInterval = setInterval(() => {
-                state.timeRemaining--;
-                updateTimerDisplay();
-                
-                if (state.timeRemaining <= 0) {
-                    nextPhase();
+            // Zone creation
+            createZoneBtn.addEventListener('click', () => {
+                const zoneName = prompt("Enter new zone name:");
+                if (zoneName && zoneName.trim() !== '') {
+                    const zoneIcon = prompt("Enter an emoji for this zone:");
+                    const zonesGrid = document.getElementById('zones-grid');
+                    
+                    const zoneCard = document.createElement('div');
+                    zoneCard.classList.add('zone-card', 'glass');
+                    zoneCard.dataset.zone = zoneName.toLowerCase().replace(/\s+/g, '-');
+                    zoneCard.innerHTML = `
+                        <div class="zone-icon">${zoneIcon || '✨'}</div>
+                        <div class="zone-title">${zoneName}</div>
+                        <div class="zone-count">0 entries</div>
+                    `;
+                    
+                    zonesGrid.appendChild(zoneCard);
+                    alert(`"${zoneName}" zone created successfully!`);
                 }
-            }, 1000);
-        }
-
-        // Pause the timer
-        function pauseTimer() {
-            state.isRunning = false;
-            clearInterval(state.timerInterval);
-            elements.startBtn.innerHTML = '<i class="fas fa-play"></i> Resume Flow';
-            elements.timerCard.classList.remove('active');
-        }
-
-        // Reset the timer
-        function resetTimer() {
-            pauseTimer();
-            state.timeRemaining = phases[state.currentPhase].duration;
-            updateTimerDisplay();
-        }
-
-        // Move to next phase
-        function nextPhase() {
-            // Record completed session
-            const completedDuration = phases[state.currentPhase].duration - state.timeRemaining;
-            state.rhythmSync.recordSession(state.currentPhase, completedDuration);
+            });
             
-            // Trigger sensory feedback
-            triggerFeedback();
+            // New goal button
+            newGoalBtn.addEventListener('click', () => {
+                goalModal.classList.add('active');
+            });
             
-            // Determine next phase
-            const phaseOrder = ['focus', 'pause', 'reflect'];
-            const currentIndex = phaseOrder.indexOf(state.currentPhase);
-            const nextIndex = (currentIndex + 1) % phaseOrder.length;
-            const nextPhase = phaseOrder[nextIndex];
+            // Settings button
+            document.getElementById('settings-btn').addEventListener('click', () => {
+                alert("Settings panel would open here in a production app");
+            });
             
-            // Update state
-            state.currentPhase = nextPhase;
-            state.timeRemaining = phases[nextPhase].duration;
+            // Export button
+            document.getElementById('export-btn').addEventListener('click', () => {
+                alert("Export functionality would be implemented here");
+            });
             
-            // Update UI
-            updateTimerDisplay();
-            elements.body.className = nextPhase;
+            // Zone cards
+            document.querySelectorAll('.zone-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const zone = this.dataset.zone;
+                    alert(`Showing content for ${zone} zone`);
+                });
+            });
             
-            // Update active indicator
-            elements.phaseIndicators.forEach(i => i.classList.remove('active'));
-            document.querySelector(`[data-phase="${nextPhase}"]`).classList.add('active');
-            
-            // Re-apply optimized durations
-            const optimized = state.rhythmSync.analyzePatterns();
-            phases.focus.duration = optimized.focus;
-            phases.pause.duration = optimized.pause;
-            phases.reflect.duration = optimized.reflect;
-            
-            // Update phase times display
-            document.querySelector('[data-phase="focus"] .phase-time').textContent = 
-                formatTime(phases.focus.duration);
-            document.querySelector('[data-phase="pause"] .phase-time').textContent = 
-                formatTime(phases.pause.duration);
-            document.querySelector('[data-phase="reflect"] .phase-time').textContent = 
-                formatTime(phases.reflect.duration);
-        }
-
-        // Trigger sensory feedback
-        function triggerFeedback() {
-            // Sound feedback
-            if (state.soundEnabled) {
-                playSoftTone();
-            }
-            
-            // Vibration feedback
-            if (state.vibrationEnabled && 'vibrate' in navigator) {
-                navigator.vibrate([200, 100, 200]);
-            }
-            
-            // Visual feedback
-            animatePhaseTransition();
-        }
-
-        // Play a soft tone
-        function playSoftTone() {
-            const context = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = context.createOscillator();
-            const gainNode = context.createGain();
-            
-            oscillator.type = 'sine';
-            
-            // Different frequencies for different phases
-            if (state.currentPhase === 'focus') {
-                oscillator.frequency.setValueAtTime(523.25, context.currentTime); // C5
-            } else if (state.currentPhase === 'pause') {
-                oscillator.frequency.setValueAtTime(392.00, context.currentTime); // G4
-            } else {
-                oscillator.frequency.setValueAtTime(329.63, context.currentTime); // E4
-            }
-            
-            gainNode.gain.setValueAtTime(0.3, context.currentTime);
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(context.destination);
-            
-            oscillator.start();
-            gainNode.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.8);
-            oscillator.stop(context.currentTime + 0.8);
-        }
-
-        // Animate phase transition
-        function animatePhaseTransition() {
-            elements.timerCard.animate([
-                { transform: 'scale(1)', opacity: 1 },
-                { transform: 'scale(0.95)', opacity: 0.7 },
-                { transform: 'scale(1)', opacity: 1 }
-            ], {
-                duration: 500,
-                easing: 'ease-out'
+            // Timeline filter button
+            document.getElementById('filter-timeline-btn').addEventListener('click', () => {
+                alert("Timeline filter options would appear here");
             });
         }
-
-        // Update timer display
-        function updateTimerDisplay() {
-            const minutes = Math.floor(state.timeRemaining / 60);
-            const seconds = state.timeRemaining % 60;
-            elements.timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        // Initialize app on load
+        window.addEventListener('DOMContentLoaded', initApp);
+        
+        // PWA Installation
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            // Store the event for later use
+            const deferredPrompt = e;
             
-            // Update progress bar
-            const phaseDuration = phases[state.currentPhase].duration;
-            const progress = (phaseDuration - state.timeRemaining) / phaseDuration;
-            elements.progressBar.style.width = `${progress * 100}%`;
+            // Show install button (we don't have one, but could add in future)
+            console.log('PWA installation available');
             
-            // Update phase display
-            elements.phaseDisplay.textContent = phases[state.currentPhase].name;
-            elements.phaseDescription.textContent = phases[state.currentPhase].description;
-        }
-
-        // Format time for display
-        function formatTime(seconds) {
-            const minutes = Math.floor(seconds / 60);
-            return `${minutes.toString().padStart(2, '0')}:00`;
-        }
-
-        // Initialize the app
-        window.addEventListener('DOMContentLoaded', init);
+            // Listen for app install event
+            window.addEventListener('appinstalled', () => {
+                console.log('CognOS installed successfully');
+            });
+        });
     </script>
 </body>
 </html>
